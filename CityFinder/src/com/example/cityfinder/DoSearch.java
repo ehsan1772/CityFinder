@@ -7,46 +7,36 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.View;
 import android.widget.ProgressBar;
 
 
 public class DoSearch extends AsyncTask<Void, ProgressBar,List<ZipcodeRow>>{
 	
-	SQLiteDatabase db;
-	String searchPhrase;
-	OnSearchCompleteListener listener;
+	private SQLiteDatabase db;
+	private String searchPhrase;
+	private OnSearchCompleteListener listener;
+	private List<ZipcodeRow> intertable;
 	
 	public DoSearch(SQLiteDatabase db, String searchPhrase, OnSearchCompleteListener listener)
-	{
-		
+	{		
 		this.searchPhrase = searchPhrase;
-		Log.d("Search Phrase:", searchPhrase);
 		this.db = db;
 		this.listener = listener;
-
-
 	}
 
-//	String searchphrase;
-	List<ZipcodeRow> intertable;
+
 	@Override
 	protected List<ZipcodeRow> doInBackground(Void... params) {
 		// TODO Auto-generated method stub
 		intertable = new ArrayList<ZipcodeRow>();
-//    	List<String> zipcodes = new ArrayList<String>();
-//    	List<String> cities = new ArrayList<String>();
-    	
-    //	SQLiteDatabase db = dbhelper.getReadableDatabase();
+
     	Cursor zipcursor = null;
     	Cursor refcursor = null;
     	Cursor citycursor = null;
-    //	List<ZipcodeRow> intertable;
     	
     	int zipcode;
     	try{
     	zipcode = Integer.valueOf(searchPhrase);
-    	Log.d("Zip = ", String.valueOf(zipcode));
     	}
     	catch(NumberFormatException exeption)
     	{
@@ -65,11 +55,7 @@ public class DoSearch extends AsyncTask<Void, ProgressBar,List<ZipcodeRow>>{
     			
     			if (Zipcode.contains(String.valueOf(zipcode)))
     			{
-   // 				zipcodes.add(ZIP_id);
-    				Log.d("Zip is", Zipcode);
-    				
-    				Log.d("Query is:", "SELECT * FROM CrossReference WHERE ZipCodeId =" + String.valueOf(ZIP_id));
-    				
+
     				refcursor = db.rawQuery("SELECT * FROM CrossReference WHERE ZipCodeId =" + String.valueOf(ZIP_id) , null);
     		    	if (refcursor != null && refcursor.moveToFirst())
     		    	{
@@ -181,10 +167,6 @@ public class DoSearch extends AsyncTask<Void, ProgressBar,List<ZipcodeRow>>{
     		while (citycursor.moveToNext());
 			
     	}
-    	    	
-    	
-
-	//	Searchresult result = new Searchresult(zipcodes, cities);
 		
     	}
 		return intertable;
@@ -198,30 +180,13 @@ public class DoSearch extends AsyncTask<Void, ProgressBar,List<ZipcodeRow>>{
 		
 		listener.onSearchComplete(result);
 
-//		toshow = result;
-//		searchinprogress = false;
-//        zva = new ZipViewAdapter(getBaseContext(), R.layout.zipcodeview, toshow);
-////         Log.d("Table count : ", String.valueOf(table.size()));
-//        lv.setAdapter(zva);
-//        tv.setText("");
-//		pbar2.setVisibility(View.INVISIBLE);
 
 		super.onPostExecute(result);
 	}
 
 	@Override
 	protected void onPreExecute() {
-		// TODO Auto-generated method stub
-		
-//		searchinprogress = true;
-//		
-//		pbar2.setVisibility(View.VISIBLE);
-
-		//searchPhrase = et.getText().toString();
 		searchPhrase = searchPhrase.toUpperCase();
-	//	intertable = table;
-//		tv.setText("Searching the database ...");
-//		tv.bringToFront();
 		super.onPreExecute();
 	}
 
