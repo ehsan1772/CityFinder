@@ -115,6 +115,7 @@ public class MainActivity extends Activity implements OnSearchCompleteListener, 
 			if (!et.getText().toString().equals(""))
 			{
 				Status stat = null;
+				if (dosearch!=null)
 				stat = dosearch.getStatus();
 				
 				if (stat == null || dosearch.getStatus() == Status.FINISHED)

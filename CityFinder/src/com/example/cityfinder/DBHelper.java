@@ -9,6 +9,7 @@ import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
 /**
@@ -22,7 +23,7 @@ public class DBHelper extends SQLiteOpenHelper{
 	private final static String DB_PATH = "/data/data/com.example.cityfinder/databases/"; 
     private final static String DB_NAME = "zipsample.db";
     private SQLiteDatabase myDataBase; 
-    private final Context myContext;
+    private Context myContext;
     
 	public DBHelper(Context context, String name, CursorFactory factory, int version) {
 		super(context, name, factory, version);
@@ -50,8 +51,11 @@ public class DBHelper extends SQLiteOpenHelper{
     private boolean checkDataBase(){   	 
     	SQLiteDatabase checkDB = null;
 		String myPath = DB_PATH + DB_NAME;
+		try {
 		checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
-
+		} catch (SQLiteException e) {
+			return false;
+		}
     	if(checkDB != null)
     		checkDB.close();
  
