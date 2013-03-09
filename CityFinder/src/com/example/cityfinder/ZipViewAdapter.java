@@ -16,11 +16,13 @@ public class ZipViewAdapter extends ArrayAdapter<ZipcodeRow>{
 	List<ZipcodeRow> lzipview;
 	Context context;
 	ZipcodeRow zipview;
+	private ViewHolder viewHolder;
 
 	public ZipViewAdapter(Context context, int textViewResourceId, ZipcodeRow[] objects) {
 		super(context, textViewResourceId, objects);
 		zipviews = objects;
 		this.context = context;
+		viewHolder = new ViewHolder();
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -28,23 +30,31 @@ public class ZipViewAdapter extends ArrayAdapter<ZipcodeRow>{
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		// TODO Auto-generated method stub
-//		ZipcodeRow zipview = zipviews[position];
+
 		zipview = lzipview.get(position);
 		
+		if (convertView==null)
+		{
 		LayoutInflater inflator = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View rowview = inflator.inflate(R.layout.zipcodeview, parent, false);
-		TextView zip = (TextView) rowview.findViewById(R.id.zip);
-		TextView city = (TextView) rowview.findViewById(R.id.city);
-		TextView state = (TextView) rowview.findViewById(R.id.state);
+		convertView = inflator.inflate(R.layout.zipcodeview, parent, false);
+		viewHolder = new ViewHolder();
+		viewHolder.zip = (TextView) convertView.findViewById(R.id.zip);
+		viewHolder.city = (TextView) convertView.findViewById(R.id.city);
+		viewHolder.state = (TextView) convertView.findViewById(R.id.state);
+		
+		convertView.setTag(viewHolder);
+		}
+		else{
+			viewHolder = (ViewHolder) convertView.getTag();
+		}
 
 		
-		zip.setText("Zip : " + zipview.zipCodeData.getZipcode());
-		city.setText("City : " +zipview.locationData.getCity());
-		state.setText("State : " + zipview.locationData.getState());
+		viewHolder.zip.setText("Zip : " + zipview.zipCodeData.getZipcode());
+		viewHolder.city.setText("City : " +zipview.locationData.getCity());
+		viewHolder.state.setText("State : " + zipview.locationData.getState());
 
 	
-		return rowview;
+		return convertView;
 
 		
 	}
@@ -56,6 +66,12 @@ public class ZipViewAdapter extends ArrayAdapter<ZipcodeRow>{
 		this.context = context;
 		// TODO Auto-generated constructor stub
 	}
-
+	
+	static private class ViewHolder {
+		TextView zip;
+		TextView city;
+		TextView state;
+		
+	}
 
 }
