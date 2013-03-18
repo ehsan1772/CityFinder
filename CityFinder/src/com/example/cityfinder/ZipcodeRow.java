@@ -1,3 +1,4 @@
+
 package com.example.cityfinder;
 
 public class ZipcodeRow {

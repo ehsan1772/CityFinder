@@ -1,3 +1,4 @@
+
 package com.example.cityfinder;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import com.google.android.maps.OverlayItem;
 
 public class Citymap extends MapActivity {
 
+	
 	@Override
 	protected void onCreate(Bundle arg0) {
 		// TODO Auto-generated method stub

@@ -1,3 +1,4 @@
+
 package com.example.cityfinder;
 
 import java.util.List;
@@ -21,7 +22,6 @@ public class DoSearch extends AsyncTask<Void, ProgressBar,List<ZipcodeRow>>{
 		this.listener = listener;
 		mySearchManager = new MySearchManager();
 	}
-//ooooooooo
 
 	@Override
 	protected List<ZipcodeRow> doInBackground(Void... params) {
