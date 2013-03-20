@@ -1,5 +1,10 @@
 package com.example.cityfinder;
 
+/**
+ * This class represents the objects that are shown as the result of the search
+ * @author Ehsan Barekati
+ *
+ */
 public class BriefResult {
 	
 	private String zip;

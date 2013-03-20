@@ -1,44 +1,33 @@
 
 package com.example.cityfinder;
 
-import java.util.ArrayList;
 import java.util.List;
-
-
-
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.database.Cursor;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * 
+ * This class is the main activity of the app. 
+ * It sets up the UI and implements the required interfaces to communicate with other classes 
+ * @author Ehsan Barekati
+ *
+ */
 public class MainActivity extends Activity implements OnSearchListener, MyListViewOwner, OnClickListener {
 
 
 	private MyListView listView;
-//	private ProgressBar pbar;
-	private ProgressBar pbar2;
-	private TextView textView;
+	private ProgressBar progressBar;
 	private ImageButton button;
 	private EditText editText;
-	
-//	private boolean searchinprogress;
-	private DBHelper dbhelper;
+	private MyDatabaseHelper myDatabaseHelper;
 	private List<ZipcodeRow> table;
 	private List<BriefResult> toshow;
 	private ZipViewAdapter zipViewAdapter;
@@ -46,12 +35,12 @@ public class MainActivity extends Activity implements OnSearchListener, MyListVi
 	private DoSearch dosearch;
 	private Cursor cursor;
 
+	/**
+	 * Sets up the UI for the search mode
+	 */
 	protected void onPreSearch() {	
-//		searchinprogress = true;	
-		pbar2.setVisibility(View.VISIBLE);
-		textView.setText("Searching the database ...");
-		textView.bringToFront();
-
+		progressBar.setVisibility(View.VISIBLE);
+		button.setVisibility(View.INVISIBLE);
 	}
 
 
@@ -61,59 +50,41 @@ public class MainActivity extends Activity implements OnSearchListener, MyListVi
         setContentView(R.layout.activity_main);
         
         button = (ImageButton) findViewById(R.id.button1);
- //       pbar = (ProgressBar) findViewById(R.id.progressBar1);
-        pbar2 = (ProgressBar) findViewById(R.id.progressBar2);
-        textView = (TextView) findViewById(R.id.textView1);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar2);
         editText = (EditText)findViewById(R.id.text);
         listView = (MyListView) findViewById(R.id.listView1);
         
-        textView.setVisibility(View.INVISIBLE);
-//        pbar.setVisibility(View.INVISIBLE);
-        pbar2.setVisibility(View.INVISIBLE);
+        progressBar.setVisibility(View.INVISIBLE);
         
- //       searchinprogress=true;
-    	dbhelper = new DBHelper(this, "zipsample.db", null, 1);
+    	myDatabaseHelper = new MyDatabaseHelper(this, "zipsample.db", null, 1);
     	
     	listView.setTheOwner(this);     
 		button.setOnClickListener(this);
 		
     }  
 
-
-    public List<ZipcodeRow> dbquery(String serach)
-    {
-    	List<ZipcodeRow> result = new ArrayList<ZipcodeRow>();
-    	for(ZipcodeRow zcr : table)
-    	{
-    		if (zcr.locationData.getCity().contains(serach))
-    			result.add(zcr);
-    		else if(zcr.zipCodeData.getZipcode().contains(serach))
-    			result.add(zcr);
-    	}
-
-		return result;
-    }
-    
-
+   /**
+    * This is a listener method that gets invoked by the DoSearch instance upon the completion of the search
+    */
 		public void onSearchComplete(List<BriefResult> data) {
-			// TODO Auto-generated method stub
 			toshow = data;
-	//		searchinprogress = false;
-			Log.d("Task : ", "Before Adapter");
 	        zipViewAdapter = new ZipViewAdapter(getBaseContext(), R.layout.zipcodeview, toshow);
 	        listView.setAdapter(zipViewAdapter);
-	    	Log.d("Task : ", "After Adapter");
-	        textView.setText("");
-			pbar2.setVisibility(View.INVISIBLE);
+			progressBar.setVisibility(View.INVISIBLE);
+			button.setVisibility(View.VISIBLE);
 		}
 
-
+/**
+ * returns the objects that the clicked view on the ListView represents
+ */
 		public Object getClickedItem(int position) {
-			BriefResult map = toshow.get(position);
-			return map;
+			BriefResult clickedObject = toshow.get(position);
+			return clickedObject;
 		}
 
-
+/**
+ * The onClick listener that checks if everything is ready to initiate the search and then initiates it 
+ */
 		public void onClick(View v) {
 			if (!editText.getText().toString().equals(""))
 			{
@@ -123,9 +94,8 @@ public class MainActivity extends Activity implements OnSearchListener, MyListVi
 				
 				if (stat == null || dosearch.getStatus() == Status.FINISHED)
 				{
-				textView.setVisibility(View.VISIBLE);
 				searchphrase = editText.getText().toString();
-	        	dosearch = new DoSearch(dbhelper.getReadableDatabase(), searchphrase, MainActivity.this);
+	        	dosearch = new DoSearch(myDatabaseHelper.getReadableDatabase(), searchphrase, MainActivity.this);
 	        	onPreSearch();
 	        	dosearch.execute(new Void[]{});
 				}
@@ -142,18 +112,19 @@ public class MainActivity extends Activity implements OnSearchListener, MyListVi
 			
 		}
 
-
+/**
+ * It sets the reference variable to the Cursor instance that was required during the search
+ */
 		public void setCursor(Cursor cursor) {
 			this.cursor = cursor;
 		}
 
-
+/**
+ * return the Cursor instance
+ */
 		public Cursor getCursor() {
 			return cursor;
 		}
-
-
-
 
 
 }

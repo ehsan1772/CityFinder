@@ -1,6 +1,11 @@
 
 package com.example.cityfinder;
 
+/**
+ * This class is the full representation of the items in the database in am object format
+ * @author Ehsan Barekati
+ *
+ */
 public class ZipcodeRow {
 	
 	public ZipCodeData zipCodeData;

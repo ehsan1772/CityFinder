@@ -1,15 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    
-        <Space
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical" >
+        <TextView
+        android:id="@+id/coordinate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="TextView" />
+    </LinearLayout>
+
+     <LinearLayout
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:orientation="vertical" >
+         
+                 <Space
         android:layout_width="match_parent"
         android:layout_height="20dp" />
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/cityandstate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
@@ -20,26 +38,48 @@
     <Space
         android:layout_width="match_parent"
         android:layout_height="20dp" />
-
-    <TextView
-        android:id="@+id/textView2"
+    
+        <TextView
+        android:id="@+id/county"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-               android:layout_gravity="center_horizontal"
+        android:layout_gravity="center_horizontal"
         android:text="TextView" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/population"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-               android:layout_gravity="center_horizontal"
+        android:layout_gravity="center_horizontal"
         android:text="TextView" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/housing"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-               android:layout_gravity="center_horizontal"
+        android:layout_gravity="center_horizontal"
         android:text="TextView" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/income"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="TextView" />
+     <TextView
+        android:id="@+id/landarea"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="TextView" />
+          <TextView
+        android:id="@+id/waterarea"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="TextView" />
+     </LinearLayout>
+
+
+
+</RelativeLayout>

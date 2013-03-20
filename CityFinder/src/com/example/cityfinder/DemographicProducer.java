@@ -2,6 +2,11 @@ package com.example.cityfinder;
 
 import android.database.Cursor;
 
+/**
+ * This class has a static method that maps a row in the given cursor to a ZipcodeRow instance
+ * @author Ehsan Barekati
+ *
+ */
 public class DemographicProducer {
 	public static ZipcodeRow getDemographic(Cursor cursor, int position){
 		

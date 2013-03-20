@@ -15,6 +15,10 @@ public interface MyListViewOwner {
 	 * @return The object that's represented by the clicked view
 	 */
 	Object getClickedItem(int position);
+	/**
+	 * This method provides access to the out come of the last query as a cursor
+	 * @return The cursor
+	 */
 	Cursor getCursor();
 
 }

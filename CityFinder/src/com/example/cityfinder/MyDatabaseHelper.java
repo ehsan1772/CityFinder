@@ -19,14 +19,14 @@ import android.database.sqlite.SQLiteOpenHelper;
  * @author Ehsan Barekati
  *
  */
-public class DBHelper extends SQLiteOpenHelper{
+public class MyDatabaseHelper extends SQLiteOpenHelper{
 
 	private final static String DB_PATH = "/data/data/com.example.cityfinder/databases/"; 
     private final static String DB_NAME = "zipsample.db";
     private SQLiteDatabase myDataBase; 
     private Context myContext;
     
-	public DBHelper(Context context, String name, CursorFactory factory, int version) {
+	public MyDatabaseHelper(Context context, String name, CursorFactory factory, int version) {
 		super(context, name, factory, version);
 		myContext = context;
     	try {

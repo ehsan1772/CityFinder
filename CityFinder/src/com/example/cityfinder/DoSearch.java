@@ -30,8 +30,7 @@ public class DoSearch extends AsyncTask<Void, ProgressBar,List<BriefResult>>{
 	@Override
 	protected List<BriefResult> doInBackground(Void... params) {
 
-    		intertable = mySearchManager.searchByQuery(searchPhrase, db);
-    	
+    	intertable = mySearchManager.searchByQuery(searchPhrase, db);
 		return intertable;
 	}
     	

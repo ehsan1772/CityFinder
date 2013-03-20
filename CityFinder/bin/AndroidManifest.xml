@@ -22,12 +22,12 @@
             </intent-filter>
         </activity>
         <activity 
-         android:name=".Citymap">
+         android:name=".CityMap">
             
         </activity>
         
                 <activity 
-         android:name=".demoinfo">
+         android:name=".DemographicInfo">
             
         </activity>
         <uses-library android:name="com.google.android.maps"/>
