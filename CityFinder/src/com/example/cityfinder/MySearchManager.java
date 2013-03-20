@@ -8,15 +8,23 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+/**
+ * This class offers different methods to perform queries on the database
+ * @author Ehsan Barekati
+ *
+ */
 public class MySearchManager {
 	
 	private Cursor zipcursor;
 	private Cursor refcursor;
 	private Cursor citycursor;
-	private ArrayList<ZipcodeRow> intertable;
+	private List<BriefResult> intertable;
+	private String query;
+	private OnSearchListener onSearchListener;
 	
-	public MySearchManager(){
-		intertable = new ArrayList<ZipcodeRow>();
+	public MySearchManager(OnSearchListener onSearchListener){
+		intertable = new ArrayList<BriefResult>();
+		this.onSearchListener = onSearchListener;
 	}
 	
 	/**
@@ -39,132 +47,106 @@ public boolean isInteger(String input){
  * @param database The database
  * @return The found rows
  */
-public List<ZipcodeRow> searchByZip(String searchPhrase, SQLiteDatabase database){
+
+
+private String getCityBasedQuery(String searchPhrase){
+	String query = " SELECT ZipCodeData.*, LocationData.*, CrossReference.* " +
+			"FROM ZipCodeData, LocationData, CrossReference " +
+			"WHERE LocationData.City LIKE '%" + searchPhrase + "%' " +
+			"AND CrossReference.LocationDataId = LocationData._id " +
+			"AND CrossReference.ZipCodeId = ZipCodeData._id;";
+	
+	return query;
+}
+
+private String getZipBasedQuery(String searchPhrase){
+	String query = " SELECT ZipCodeData.*, LocationData.*, CrossReference.* " +
+			"FROM ZipCodeData, LocationData, CrossReference " +
+			"WHERE ZipCodeData.ZipCode LIKE '%" + searchPhrase + "%' " +
+			"AND CrossReference.LocationDataId = LocationData._id " +
+			"AND CrossReference.ZipCodeId = ZipCodeData._id;";
+	
+	return query;
+}
+
+public List<BriefResult> searchByQuery(String searchPhrase, SQLiteDatabase database){
+	
 	intertable.clear();
-	zipcursor = database.rawQuery("SELECT * FROM ZipCodeData;", null);	    	
-if (zipcursor != null && zipcursor.moveToFirst())
-{
+
+	if(isInteger(searchPhrase))
+		query = getZipBasedQuery(searchPhrase);
+	else
+		query = getCityBasedQuery(searchPhrase);
+
+	Log.d("Task : ", "Before query");
+	zipcursor = database.rawQuery(query, null);
+	onSearchListener.setCursor(zipcursor);
+	Log.d("Task : ", "After query, before convertion");
+	intertable = cursorToList(zipcursor);
+	Log.d("Task : ", "After convertion");
+	return intertable;
+}
+
+private List<BriefResult> cursorToList(Cursor cursor){
+	
+	if(cursor == null || cursor.getCount() == 0)
+		return null;
+	
+	cursor.moveToFirst();
+	List<BriefResult> result = new ArrayList<BriefResult>();
+	
 	do
 	{
-		String Zipcode = zipcursor.getString(1);
-		String ZIP_id = zipcursor.getString(0);
+		BriefResult temp = new BriefResult();
 		
-		if (Zipcode.contains(searchPhrase))
-		{
-
-			refcursor = database.rawQuery("SELECT * FROM CrossReference WHERE ZipCodeId =" + String.valueOf(ZIP_id) , null);
-	    	if (refcursor != null && refcursor.moveToFirst())
-	    	{
-	    		do
-	    		{
-	    		String relatedcity = refcursor.getString(1);
-	    		citycursor = database.rawQuery("SELECT * FROM  LocationData WHERE _id =" + relatedcity , null);
-		    		do
-		    		{
-		    			ZipcodeRow temp = new ZipcodeRow();
-		    			
-		    			citycursor.moveToFirst();
-		    			
-		    			
-		    			temp.zipCodeData.setZipcode(zipcursor.getString(1));
-		    			temp.zipCodeData.setLatitude(zipcursor.getString(2));
-		    			temp.zipCodeData.setLongitude(zipcursor.getString(3));
-		    			temp.zipCodeData.setPopulation(zipcursor.getString(4));
-		    			temp.zipCodeData.setHousing(zipcursor.getString(5));
-		    			temp.zipCodeData.setIncome(zipcursor.getString(6));
-		    			temp.zipCodeData.setLandArea(zipcursor.getString(7));
-		    			temp.zipCodeData.setWaterArea(zipcursor.getString(8));
-		    			temp.zipCodeData.setMilitaryRestrictionCodes(zipcursor.getString(9));
-		    		
-		    			temp.locationData.setCity(citycursor.getString(1));
-		    			temp.locationData.setState(citycursor.getString(2));
-		    			temp.locationData.setCounty(citycursor.getString(3));
-		    			temp.locationData.setType(citycursor.getString(4));
-		    			temp.locationData.setPreferred(citycursor.getString(5));
-		    			temp.locationData.setWorldregion(citycursor.getString(6));
-		    			temp.locationData.setCountry(citycursor.getString(7));
-		    			temp.locationData.setLocationText(citycursor.getString(8));
-		    			temp.locationData.setLoaction(citycursor.getString(9));
-
-		    			intertable.add(temp);
-		    		}while (citycursor.moveToNext());
-	    		
-	    		}while (refcursor.moveToNext());
-			
-	    	}
-		}
-
+		temp.setCity(cursor.getString(11));
+		temp.setState(cursor.getString(12));
+		temp.setZip(cursor.getString(1));
+		temp.setRowPosition(cursor.getPosition());
 		
-	}
-	while (zipcursor.moveToNext());
-}
+		result.add(temp);
+	}while (cursor.moveToNext());
 	
-	return intertable;
+	return result;
 }
 
-public List<ZipcodeRow> searchByLocation(String searchPhrase, SQLiteDatabase database){
-	
-	intertable.clear();
-	citycursor = database.rawQuery("SELECT * FROM LocationData;", null);	    	
-	if (citycursor != null && citycursor.moveToFirst())
-	{
-		do
-		{
-			String City = citycursor.getString(1);
-			String City_id = citycursor.getString(0);
-			
-			if (City.contains(searchPhrase))
-			{
-				Log.d("City is:", City);
-				//zipcodes.add(ZIP_id);
-				Log.d("Query is:", "SELECT * FROM CrossReference WHERE LocationDataId =" + City_id);
-				refcursor = database.rawQuery("SELECT * FROM CrossReference WHERE LocationDataId =" + City_id , null);
-		    	if (refcursor != null && refcursor.moveToFirst())
-		    	{
-		    		do
-		    		{
-		    		String relatedzip = refcursor.getString(2);
-		    		
-		    		zipcursor = database.rawQuery("SELECT * FROM  ZipCodeData WHERE _id =" + relatedzip , null);
-    		    		do
-    		    		{
-    		    			ZipcodeRow temp = new ZipcodeRow();
-    		    			
-    		    			zipcursor.moveToFirst();
-    		    			
-    		    			
-    		    			temp.zipCodeData.setZipcode(zipcursor.getString(1));
-    		    			temp.zipCodeData.setLatitude(zipcursor.getString(2));
-    		    			temp.zipCodeData.setLongitude(zipcursor.getString(3));
-    		    			temp.zipCodeData.setPopulation(zipcursor.getString(4));
-    		    			temp.zipCodeData.setHousing(zipcursor.getString(5));
-    		    			temp.zipCodeData.setIncome(zipcursor.getString(6));
-    		    			temp.zipCodeData.setLandArea(zipcursor.getString(7));
-    		    			temp.zipCodeData.setWaterArea(zipcursor.getString(8));
-    		    			temp.zipCodeData.setMilitaryRestrictionCodes(zipcursor.getString(9));
-    		    		
-    		    			temp.locationData.setCity(citycursor.getString(1));
-    		    			temp.locationData.setState(citycursor.getString(2));
-    		    			temp.locationData.setCounty(citycursor.getString(3));
-    		    			temp.locationData.setType(citycursor.getString(4));
-    		    			temp.locationData.setPreferred(citycursor.getString(5));
-    		    			temp.locationData.setWorldregion(citycursor.getString(6));
-    		    			temp.locationData.setCountry(citycursor.getString(7));
-    		    			temp.locationData.setLocationText(citycursor.getString(8));
-    		    			temp.locationData.setLoaction(citycursor.getString(9));
-
-    		    			intertable.add(temp);
-    		    		}while (zipcursor.moveToNext());
-		    		
-		    		}while (refcursor.moveToNext());
-				
-		    	}
-			}
-		}
-		while (citycursor.moveToNext());
-		
-	}
-	return intertable;
-}
+//private List<ZipcodeRow> cursorToList(Cursor cursor){
+//	
+//	if(cursor == null || cursor.getCount() == 0)
+//		return null;
+//	
+//	cursor.moveToFirst();
+//	List<ZipcodeRow> result = new ArrayList<ZipcodeRow>();
+//	
+//	do
+//	{
+//		ZipcodeRow temp = new ZipcodeRow();
+//		
+//
+//		temp.zipCodeData.setZipcode(cursor.getString(1));
+//		temp.zipCodeData.setLatitude(cursor.getString(2));
+//		temp.zipCodeData.setLongitude(cursor.getString(3));
+//		temp.zipCodeData.setPopulation(cursor.getString(4));
+//		temp.zipCodeData.setHousing(cursor.getString(5));
+//		temp.zipCodeData.setIncome(cursor.getString(6));
+//		temp.zipCodeData.setLandArea(cursor.getString(7));
+//		temp.zipCodeData.setWaterArea(cursor.getString(8));
+//		temp.zipCodeData.setMilitaryRestrictionCodes(cursor.getString(9));
+//	
+//		temp.locationData.setCity(cursor.getString(11));
+//		temp.locationData.setState(cursor.getString(12));
+//		temp.locationData.setCounty(cursor.getString(13));
+//		temp.locationData.setType(cursor.getString(14));
+//		temp.locationData.setPreferred(cursor.getString(15));
+//		temp.locationData.setWorldregion(cursor.getString(16));
+//		temp.locationData.setCountry(cursor.getString(17));
+//		temp.locationData.setLocationText(cursor.getString(18));
+//		temp.locationData.setLoaction(cursor.getString(19));
+//
+//		result.add(temp);
+//	}while (cursor.moveToNext());
+//	
+//	return result;
+//}
 
 }

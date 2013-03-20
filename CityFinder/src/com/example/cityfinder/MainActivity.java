@@ -15,6 +15,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -25,32 +27,30 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends Activity implements OnSearchCompleteListener, MyListViewOwner, OnClickListener {
+public class MainActivity extends Activity implements OnSearchListener, MyListViewOwner, OnClickListener {
 
 
-	private MyListView lv;
-	private boolean searchinprogress;
-	private ProgressBar pbar;
+	private MyListView listView;
+//	private ProgressBar pbar;
 	private ProgressBar pbar2;
-	//AlertDialog.Builder builder;
-	//DialogInterface.OnClickListener dialogClickListener;
-	//int deleteposition;
-	private TextView tv;
-	private EditText et;
+	private TextView textView;
+	private ImageButton button;
+	private EditText editText;
+	
+//	private boolean searchinprogress;
 	private DBHelper dbhelper;
-	
-	
 	private List<ZipcodeRow> table;
-	private List<ZipcodeRow> toshow;
-	private ZipViewAdapter zva;
+	private List<BriefResult> toshow;
+	private ZipViewAdapter zipViewAdapter;
 	private String searchphrase;
 	private DoSearch dosearch;
+	private Cursor cursor;
 
 	protected void onPreSearch() {	
-		searchinprogress = true;	
+//		searchinprogress = true;	
 		pbar2.setVisibility(View.VISIBLE);
-		tv.setText("Searching the database ...");
-		tv.bringToFront();
+		textView.setText("Searching the database ...");
+		textView.bringToFront();
 
 	}
 
@@ -60,21 +60,21 @@ public class MainActivity extends Activity implements OnSearchCompleteListener, 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        ImageButton button = (ImageButton) findViewById(R.id.button1);
-        pbar = (ProgressBar) findViewById(R.id.progressBar1);
+        button = (ImageButton) findViewById(R.id.button1);
+ //       pbar = (ProgressBar) findViewById(R.id.progressBar1);
         pbar2 = (ProgressBar) findViewById(R.id.progressBar2);
-        tv = (TextView) findViewById(R.id.textView1);
-        et = (EditText)findViewById(R.id.text);
-        lv = (MyListView) findViewById(R.id.listView1);
+        textView = (TextView) findViewById(R.id.textView1);
+        editText = (EditText)findViewById(R.id.text);
+        listView = (MyListView) findViewById(R.id.listView1);
         
-        tv.setVisibility(View.INVISIBLE);
-        pbar.setVisibility(View.INVISIBLE);
+        textView.setVisibility(View.INVISIBLE);
+//        pbar.setVisibility(View.INVISIBLE);
         pbar2.setVisibility(View.INVISIBLE);
         
-        searchinprogress=true;
+ //       searchinprogress=true;
     	dbhelper = new DBHelper(this, "zipsample.db", null, 1);
     	
-    	lv.setTheOwner(this);     
+    	listView.setTheOwner(this);     
 		button.setOnClickListener(this);
 		
     }  
@@ -95,25 +95,27 @@ public class MainActivity extends Activity implements OnSearchCompleteListener, 
     }
     
 
-		public void onSearchComplete(List<ZipcodeRow> data) {
+		public void onSearchComplete(List<BriefResult> data) {
 			// TODO Auto-generated method stub
 			toshow = data;
-			searchinprogress = false;
-	        zva = new ZipViewAdapter(getBaseContext(), R.layout.zipcodeview, toshow);
-	        lv.setAdapter(zva);
-	        tv.setText("");
+	//		searchinprogress = false;
+			Log.d("Task : ", "Before Adapter");
+	        zipViewAdapter = new ZipViewAdapter(getBaseContext(), R.layout.zipcodeview, toshow);
+	        listView.setAdapter(zipViewAdapter);
+	    	Log.d("Task : ", "After Adapter");
+	        textView.setText("");
 			pbar2.setVisibility(View.INVISIBLE);
 		}
 
 
 		public Object getClickedItem(int position) {
-   		 ZipcodeRow map = toshow.get(position);
+			BriefResult map = toshow.get(position);
 			return map;
 		}
 
 
 		public void onClick(View v) {
-			if (!et.getText().toString().equals(""))
+			if (!editText.getText().toString().equals(""))
 			{
 				Status stat = null;
 				if (dosearch!=null)
@@ -121,8 +123,8 @@ public class MainActivity extends Activity implements OnSearchCompleteListener, 
 				
 				if (stat == null || dosearch.getStatus() == Status.FINISHED)
 				{
-				tv.setVisibility(View.VISIBLE);
-				searchphrase = et.getText().toString();
+				textView.setVisibility(View.VISIBLE);
+				searchphrase = editText.getText().toString();
 	        	dosearch = new DoSearch(dbhelper.getReadableDatabase(), searchphrase, MainActivity.this);
 	        	onPreSearch();
 	        	dosearch.execute(new Void[]{});
@@ -138,6 +140,16 @@ public class MainActivity extends Activity implements OnSearchCompleteListener, 
 				toast.show();
 			}
 			
+		}
+
+
+		public void setCursor(Cursor cursor) {
+			this.cursor = cursor;
+		}
+
+
+		public Cursor getCursor() {
+			return cursor;
 		}
 
 

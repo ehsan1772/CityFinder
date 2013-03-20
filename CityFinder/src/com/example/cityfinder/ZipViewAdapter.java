@@ -11,15 +11,15 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class ZipViewAdapter extends ArrayAdapter<ZipcodeRow>{
+public class ZipViewAdapter extends ArrayAdapter<BriefResult>{
 	
-	ZipcodeRow[] zipviews;
-	List<ZipcodeRow> lzipview;
+	BriefResult[] zipviews;
+	List<BriefResult> lzipview;
 	Context context;
-	ZipcodeRow zipview;
+	BriefResult zipview;
 	private ViewHolder viewHolder;
 
-	public ZipViewAdapter(Context context, int textViewResourceId, ZipcodeRow[] objects) {
+	public ZipViewAdapter(Context context, int textViewResourceId, BriefResult[] objects) {
 		super(context, textViewResourceId, objects);
 		zipviews = objects;
 		this.context = context;
@@ -50,9 +50,9 @@ public class ZipViewAdapter extends ArrayAdapter<ZipcodeRow>{
 		}
 
 		
-		viewHolder.zip.setText("Zip : " + zipview.zipCodeData.getZipcode());
-		viewHolder.city.setText("City : " +zipview.locationData.getCity());
-		viewHolder.state.setText("State : " + zipview.locationData.getState());
+		viewHolder.zip.setText("Zip : " + zipview.getZip());
+		viewHolder.city.setText("City : " +zipview.getCity());
+		viewHolder.state.setText("State : " + zipview.getState());
 
 	
 		return convertView;
@@ -61,7 +61,7 @@ public class ZipViewAdapter extends ArrayAdapter<ZipcodeRow>{
 	}
 
 	public ZipViewAdapter(Context context, int textViewResourceId,
-			List<ZipcodeRow> objects) {
+			List<BriefResult> objects) {
 		super(context, textViewResourceId, objects);
 		lzipview = objects;
 		this.context = context;

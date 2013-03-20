@@ -57,7 +57,9 @@ public class MyListView extends ListView implements OnItemClickListener {
 
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 
-		ZipcodeRow map = (ZipcodeRow) theOwner.getClickedItem(arg2);
+		BriefResult temp = (BriefResult) theOwner.getClickedItem(arg2);
+		ZipcodeRow map = DemographicProducer.getDemographic(theOwner.getCursor(), temp.getRowPosition());
+		
 	   	Intent intent = new Intent(context.getApplicationContext(), Citymap.class);
 		intent.putExtra("info", new String[]{map.locationData.getCity(), map.locationData.getState(), map.zipCodeData.getPopulation(), map.zipCodeData.getHousing(), map.zipCodeData.getIncome(), map.zipCodeData.getLatitude(), map.zipCodeData.getLongitude()});
 		context.startActivity(intent);

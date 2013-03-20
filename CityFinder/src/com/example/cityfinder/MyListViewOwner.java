@@ -1,6 +1,8 @@
 
 package com.example.cityfinder;
 
+import android.database.Cursor;
+
 /**
  * This interface should be implemented by any activity that hosts MyListView class
  * @author Ehsan Barekati
@@ -13,5 +15,6 @@ public interface MyListViewOwner {
 	 * @return The object that's represented by the clicked view
 	 */
 	Object getClickedItem(int position);
+	Cursor getCursor();
 
 }
