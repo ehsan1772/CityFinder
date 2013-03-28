@@ -3,7 +3,7 @@ CityFinder
 This Android application responds to the following requirements:
 
 
-• Store a database of all of the zip codes in the United States along with geographic and demographic information.  See the Recommended Approach section for the raw data file.
+• Store a database of all of the zip codes in the United States along with geographic and demographic information. 
 
 •	The zip code data has a many-to-many relationship between zip code and locality name.  One locality may have multiple zip codes and one zip code may have multiple localities.
 
